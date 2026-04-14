@@ -22,11 +22,19 @@
     <video id="remoteVideo" autoplay playsinline></video>
   </div>
 
-  <script src="/socket.io/socket.io.js"></script>
+ <!-- // <script src="/socket.io/socket.io.js"></script> -->
+ <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script>
-    const socket = io();
-    const roomId = window.location.search.substring(1);
+   // const socket = io();
+   const socket = io("https://icu-virtual-visit.onrender.com", {
+  transports: ["websocket", "polling"]
+});
+    // const roomId = window.location.search.substring(1);
+const roomId = new URLSearchParams(window.location.search).get("room");
 
+// if (roomId) {
+//   socket.emit("join-room", roomId);
+// }
     const localVideo = document.getElementById('localVideo');
     const remoteVideo = document.getElementById('remoteVideo');
     const timerEl = document.getElementById('timer');
@@ -42,6 +50,10 @@
     };
 
     async function startVideo() {
+      if (!roomId) {
+  alert("Room ID missing");
+  return;
+}
       try {
         localStream = await navigator.mediaDevices.getUserMedia({
           video: true,
@@ -60,6 +72,7 @@
         //remote stream attach
         peerConnection.ontrack = event => {
           remoteVideo.srcObject = event.streams[0];
+          startCallTimer();
         };
 
         peerConnection.onicecandidate = event => {
@@ -80,6 +93,7 @@
     }
 
     socket.on('user-joined', async () => {
+      if(!peerConnection)return;
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(offer);
 
@@ -87,6 +101,8 @@
     });
 
     socket.on('offer', async offer => {
+      if (!peerConnection)return;
+      if(peerConnection.signalingState !=="stable")return;
       await peerConnection.setRemoteDescription(offer);
 
       const answer = await peerConnection.createAnswer();
@@ -96,10 +112,12 @@
     });
 
     socket.on('answer', async answer => {
+      if(!peerConnection) return;
       await peerConnection.setRemoteDescription(answer);
     });
 
     socket.on('ice-candidate', async candidate => {
+      if(!peerConnection)return ;
       try {
         await peerConnection.addIceCandidate(candidate);
       } catch (err) {
@@ -108,32 +126,63 @@
     });
 
     // TIMER
+    // let timeLeft = 300;
+    // const timer = setInterval(async () => {
+    //   timeLeft--;
+    //   timerEl.innerText = `Time Left: ${timeLeft}s`;
+
+    //   if (timeLeft <= 0) {
+    //     clearInterval(timer);
+
+    //     const endTime = new Date();
+
+    //    await fetch('https://icu-virtual-visit.onrender.com/api/session/log', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json'
+    //       },
+    //       body: JSON.stringify({
+    //         roomId,
+    //         startTime,
+    //         endTime,
+    //         duration: 300
+    //       })
+    //     });
+
+    //     window.location.href = `feedback.html?room=${roomId}`;
+    //   }
+    // }, 1000);
     let timeLeft = 300;
-    const timer = setInterval(async () => {
-      timeLeft--;
-      timerEl.innerText = `Time Left: ${timeLeft}s`;
+let timerStarted = false;
 
-      if (timeLeft <= 0) {
-        clearInterval(timer);
+function startCallTimer() {
+  if (timerStarted) return;
+  timerStarted = true;
 
-        const endTime = new Date();
+  const timer = setInterval(async () => {
+    timeLeft--;
+    timerEl.innerText = `Time Left: ${timeLeft}s`;
 
-        await fetch('/api/session/log', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            roomId,
-            startTime,
-            endTime,
-            duration: 300
-          })
-        });
+    if (timeLeft <= 0) {
+      clearInterval(timer);
 
-        window.location.href = `feedback.html?room=${roomId}`;
-      }
-    }, 1000);
+      const endTime = new Date();
+
+      await fetch('https://icu-virtual-visit.onrender.com/api/session/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          roomId,
+          startTime,
+          endTime,
+          duration: 300
+        })
+      });
+
+      window.location.href = `feedback.html?room=${roomId}`;
+    }
+  }, 1000);
+}
 
     startVideo();
   </script>
