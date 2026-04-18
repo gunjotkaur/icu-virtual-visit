@@ -1,5 +1,6 @@
 // const API = '/api';
 //const API_BASE = "https://YOUR-RENDER-BACKEND.onrender.com";
+const router = require('express').Router();
 const API_BASE = "https://icu-virtual-visit.onrender.com";
 async function apiFetch(endpoint, options = {}) {
   return fetch(`${API_BASE}${endpoint}`, options);
