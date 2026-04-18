@@ -39,25 +39,44 @@ router.post('/log', async (req, res) => {
 
 
 // Save feedback after call
+// router.post('/feedback', async (req, res) => {
+//   try {
+//     const { roomId, rating, comment } = req.body;
+
+//     const feedback = await Feedback.create({
+//       roomId,
+//       rating,
+//       comment
+//     });
+
+//     res.status(201).json({
+//       message: 'Feedback saved successfully',
+//       feedback
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: 'Error saving feedback',
+//       error: error.message
+//     });
+//   }
+// });
 router.post('/feedback', async (req, res) => {
   try {
     const { roomId, rating, comment } = req.body;
 
-    const feedback = await Feedback.create({
+    const feedback = new Feedback({
       roomId,
       rating,
       comment
     });
 
-    res.status(201).json({
-      message: 'Feedback saved successfully',
-      feedback
-    });
+    await feedback.save();
+
+    res.json({ message: "Feedback saved successfully" });
+
   } catch (error) {
-    res.status(500).json({
-      message: 'Error saving feedback',
-      error: error.message
-    });
+    console.error(error);
+    res.status(500).json({ message: "Feedback failed" });
   }
 });
 

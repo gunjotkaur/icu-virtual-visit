@@ -121,52 +121,110 @@
       <button class="submit-btn" onclick="submitFeedback()">Submit Feedback</button>
   </div>
 
-  <script>
-    let selectedRating = 0;
-    const stars = document.querySelectorAll('#ratingStars span');
+  
+  //   let selectedRating = 0;
+  //   const stars = document.querySelectorAll('#ratingStars span');
 
-    // Star selection
-    stars.forEach(star => {
-      star.addEventListener('click', () => {
-        selectedRating = Number(star.dataset.value);
+  //   // Star selection
+  //   stars.forEach(star => {
+  //     star.addEventListener('click', () => {
+  //       selectedRating = Number(star.dataset.value);
 
-        stars.forEach(s => s.classList.remove('active'));
+  //       stars.forEach(s => s.classList.remove('active'));
 
-        for (let i = 0; i < selectedRating; i++) {
-          stars[i].classList.add('active');
-        }
-      });
+  //       for (let i = 0; i < selectedRating; i++) {
+  //         stars[i].classList.add('active');
+  //       }
+  //     });
+  //   });
+
+  //   async function submitFeedback() {
+  //     const roomId = new URLSearchParams(window.location.search).get('room') || 'DEMO_ROOM_101';
+  //     const comment = document.getElementById('feedbackComment').value;
+
+  //     if (!selectedRating) {
+  //       return alert('Please select rating');
+  //     }
+
+  //     const res = await fetch('/api/session/feedback', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify({
+  //         roomId,
+  //         rating: selectedRating,
+  //         comment
+  //       })
+  //     });
+
+  //     const data = await res.json();
+
+  //     if (res.ok) {
+  //       alert('✅ Feedback submitted successfully');
+  //       window.location.href = 'history.html';
+  //     } else {
+  //       alert(data.message || 'Feedback submit failed');
+  //     }
+  //   }
+
+  
+<script>
+const API_BASE = "https://icu-virtual-visit.onrender.com";
+
+let selectedRating = 0;
+const stars = document.querySelectorAll('#ratingStars span');
+
+// ⭐ rating select
+stars.forEach(star => {
+  star.addEventListener('click', () => {
+    selectedRating = Number(star.dataset.value);
+
+    stars.forEach(s => s.classList.remove('active'));
+
+    for (let i = 0; i < selectedRating; i++) {
+      stars[i].classList.add('active');
+    }
+  });
+});
+
+// 🚀 submit function
+async function submitFeedback() {
+  const roomId = new URLSearchParams(window.location.search).get('room') || 'DEMO_ROOM_101';
+  const comment = document.getElementById('feedbackComment').value;
+
+  if (!selectedRating) {
+    return alert('Please select rating');
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/session/feedback`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        roomId,
+        rating: selectedRating,
+        comment
+      })
     });
 
-    async function submitFeedback() {
-      const roomId = new URLSearchParams(window.location.search).get('room') || 'DEMO_ROOM_101';
-      const comment = document.getElementById('feedbackComment').value;
+    const data = await res.json();
 
-      if (!selectedRating) {
-        return alert('Please select rating');
-      }
-
-      const res = await fetch('/api/session/feedback', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          roomId,
-          rating: selectedRating,
-          comment
-        })
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        alert('✅ Feedback submitted successfully');
-        window.location.href = 'history.html';
-      } else {
-        alert(data.message || 'Feedback submit failed');
-      }
+    if (res.ok) {
+      alert('✅ Feedback submitted successfully');
+      window.location.href = 'history.html';
+    } else {
+      alert(data.message || 'Feedback failed');
     }
-  </script>
+
+  } catch (error) {
+    console.error(error);
+    alert('Server error');
+  }
+}
+</script>
+  
 </body>
 </html>

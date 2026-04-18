@@ -1,7 +1,20 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 
-module.exports = mongoose.model('Feedback', new mongoose.Schema({
+// module.exports = mongoose.model('Feedback', new mongoose.Schema({
+//   roomId: String,
+//   rating: Number,
+//   comment: String
+// }));
+const mongoose = require("mongoose");
+
+const feedbackSchema = new mongoose.Schema({
   roomId: String,
   rating: Number,
-  comment: String
-}));
+  comment: String,
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+module.exports = mongoose.model("Feedback", feedbackSchema);

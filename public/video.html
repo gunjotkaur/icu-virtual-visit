@@ -125,33 +125,7 @@ const roomId = new URLSearchParams(window.location.search).get("room");
       }
     });
 
-    // TIMER
-    // let timeLeft = 300;
-    // const timer = setInterval(async () => {
-    //   timeLeft--;
-    //   timerEl.innerText = `Time Left: ${timeLeft}s`;
-
-    //   if (timeLeft <= 0) {
-    //     clearInterval(timer);
-
-    //     const endTime = new Date();
-
-    //    await fetch('https://icu-virtual-visit.onrender.com/api/session/log', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json'
-    //       },
-    //       body: JSON.stringify({
-    //         roomId,
-    //         startTime,
-    //         endTime,
-    //         duration: 300
-    //       })
-    //     });
-
-    //     window.location.href = `feedback.html?room=${roomId}`;
-    //   }
-    // }, 1000);
+   
     let timeLeft = 300;
 let timerStarted = false;
 
