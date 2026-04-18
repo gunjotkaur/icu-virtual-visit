@@ -162,7 +162,7 @@ const roomId = new URLSearchParams(window.location.search).get("room");
     });
 
    
-    let timeLeft = Number(new URLSearchParams(window.location.search).get("time")) || 300;
+   let timeLeft = Number(localStorage.getItem("callTime")) || 300;
 let timerStarted = false;
 
 function startCallTimer() {
@@ -189,7 +189,10 @@ function startCallTimer() {
         })
       });
 
-      window.location.href = `feedback.html?room=${roomId}`;
+      
+      const time = localStorage.getItem("callTime") || 300;
+
+window.location.href = `video.html?room=${room}&time=${time}`;
     }
   }, 1000);
 }
@@ -200,7 +203,10 @@ function launchVideo() {
     return alert("Enter Room ID");
   }
 
-  window.location.href = `video.html?room=${room}`;
+  
+  const time = localStorage.getItem("callTime") || 300;
+
+window.location.href = `video.html?room=${room}&time=${time}`;
 }
     startVideo();
   </script>

@@ -173,7 +173,7 @@ async function loadPendingRequests() {
 
 async function approveRequest(id) {
   const timeLimit = prompt('Enter call time limit in seconds', '300');
-
+localStorage.setItem("callTime", timeLimit);
   const res = await apiFetch(`/api/nurse/approve/${id}`, {
     method: 'POST',
     headers: {
