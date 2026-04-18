@@ -90,7 +90,7 @@ const roomId = new URLSearchParams(window.location.search).get("room");
   alert("Room ID missing");
   return;
 }
-await loadRoomTime();
+// await loadRoomTime();
       try {
         localStream = await navigator.mediaDevices.getUserMedia({
           video: true,
@@ -163,21 +163,22 @@ await loadRoomTime();
     });
 
    
-  let timeLeft = 300;
+  // let timeLeft = 300;
 
-async function loadRoomTime() {
-  try {
-    const res = await fetch(`https://icu-virtual-visit.onrender.com/api/session/room/${roomId}`);
-    const data = await res.json();
+// async function loadRoomTime() {
+//   try {
+//     const res = await fetch(`https://icu-virtual-visit.onrender.com/api/session/room/${roomId}`);
+//     const data = await res.json();
 
-    timeLeft = data.timeLimit || 300;
+//     timeLeft = data.timeLimit || 300;
 
-    console.log("Time from backend:", timeLeft);
+//     console.log("Time from backend:", timeLeft);
 
-  } catch (err) {
-    console.error("Error fetching time:", err);
-  }
-}
+//   } catch (err) {
+//     console.error("Error fetching time:", err);
+//   }
+// }
+let timeLeft=300;
 let timerStarted = false;
 
 function startCallTimer() {
@@ -205,24 +206,24 @@ function startCallTimer() {
       });
 
       
-      const time = localStorage.getItem("callTime") || 300;
+      // const time = localStorage.getItem("callTime") || 300;
 
-window.location.href = `video.html?room=${room}&time=${time}`;
+window.location.href = `feedback.html?room=${roomId}`;
     }
   }, 1000);
 }
-function launchVideo() {
-  const room = document.getElementById("roomInput").value;
+// function launchVideo() {
+//   const room = document.getElementById("roomInput").value;
 
-  if (!room) {
-    return alert("Enter Room ID");
-  }
+//   if (!room) {
+//     return alert("Enter Room ID");
+//   }
 
   
-  const time = localStorage.getItem("callTime") || 300;
+//   const time = localStorage.getItem("callTime") || 300;
 
-window.location.href = `video.html?room=${room}&time=${time}`;
-}
+// window.location.href = `video.html?room=${room}&time=${time}`;
+// }
     startVideo();
   </script>
 </body>

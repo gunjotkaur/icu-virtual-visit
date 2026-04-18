@@ -1,6 +1,5 @@
 // const API = '/api';
 //const API_BASE = "https://YOUR-RENDER-BACKEND.onrender.com";
-const router = require('express').Router();
 const API_BASE = "https://icu-virtual-visit.onrender.com";
 async function apiFetch(endpoint, options = {}) {
   return fetch(`${API_BASE}${endpoint}`, options);
@@ -174,7 +173,7 @@ async function loadPendingRequests() {
 
 async function approveRequest(id) {
   const timeLimit = prompt('Enter call time limit in seconds', '300');
-localStorage.setItem("callTime", timeLimit);
+
   const res = await apiFetch(`/api/nurse/approve/${id}`, {
     method: 'POST',
     headers: {
@@ -245,24 +244,6 @@ async function loadHistory() {
   `).join('');
 }
 
-router.get('/room/:roomId', async (req, res) => {
-  try {
-    const roomId = req.params.roomId;
-
-    const request = await Request.findOne({ roomId });
-
-    if (!request) {
-      return res.status(404).json({ message: "Room not found" });
-    }
-
-    res.json({
-      timeLimit: request.timeLimit || 300
-    });
-
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching room data" });
-  }
-});
 
 
 // FEEDBACK
