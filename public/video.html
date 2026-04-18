@@ -112,7 +112,7 @@ let socket;
         //remote stream attach
         peerConnection.ontrack = event => {
           remoteVideo.srcObject = event.streams[0];
-          startCallTimer();
+          //startCallTimer();
         };
 
         peerConnection.onicecandidate = event => {
@@ -132,13 +132,22 @@ let socket;
       }
     }
 
-    socket.on('user-joined', async () => {
-      if(!peerConnection)return;
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
+    // socket.on('user-joined', async () => {
+    //   if(!peerConnection)return;
+    //   const offer = await peerConnection.createOffer();
+    //   await peerConnection.setLocalDescription(offer);
 
-      socket.emit('offer', { roomId, offer });
-    });
+    //   socket.emit('offer', { roomId, offer });
+    // });
+    socket.on('user-joined', async () => {
+      startCallTimer();
+  if (!peerConnection) return;
+
+  const offer = await peerConnection.createOffer();
+  await peerConnection.setLocalDescription(offer);
+
+  socket.emit('offer', { roomId, offer });
+});
 
     socket.on('offer', async offer => {
       if (!peerConnection)return;
@@ -151,10 +160,19 @@ let socket;
       socket.emit('answer', { roomId, answer });
     });
 
+    // socket.on('answer', async answer => {
+    //   if(!peerConnection) return;
+    //   await peerConnection.setRemoteDescription(answer);
+    // });
     socket.on('answer', async answer => {
-      if(!peerConnection) return;
-      await peerConnection.setRemoteDescription(answer);
-    });
+  if (!peerConnection) return;
+
+  try {
+    await peerConnection.setRemoteDescription(answer);
+  } catch (e) {
+    console.log("Answer error:", e);
+  }
+});
 
     socket.on('ice-candidate', async candidate => {
       if(!peerConnection)return ;
@@ -164,6 +182,14 @@ let socket;
         console.error(err);
       }
     });
+    setTimeout(async () => {
+  if (peerConnection && socket) {
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+
+    socket.emit('offer', { roomId, offer });
+  }
+}, 2000);
 
    
   // let timeLeft = 300;
