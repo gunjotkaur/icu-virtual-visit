@@ -58,19 +58,14 @@
     <video id="remoteVideo" autoplay playsinline></video>
   </div>
 
- <!-- // <script src="/socket.io/socket.io.js"></script> -->
+ 
  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script>
-   // const socket = io();
-//    const socket = io("https://icu-virtual-visit.onrender.com", {
-//   transports: ["websocket", "polling"]
-// });
-    // const roomId = window.location.search.substring(1);
+   
+    
 const roomId = new URLSearchParams(window.location.search).get("room");
 
-// if (roomId) {
-//   socket.emit("join-room", roomId);
-// }
+
     const localVideo = document.getElementById('localVideo');
     const remoteVideo = document.getElementById('remoteVideo');
     const timerEl = document.getElementById('timer');
@@ -85,52 +80,6 @@ const roomId = new URLSearchParams(window.location.search).get("room");
       ]
     };
 let socket;
-//     async function startVideo() {
-//       if (!roomId) {
-//   alert("Room ID missing");
-//   return;
-// }
-// // await loadRoomTime();
-//   socket = io("https://icu-virtual-visit.onrender.com", {
-//   transports: ["websocket", "polling"]
-// });
-//       try {
-//         localStream = await navigator.mediaDevices.getUserMedia({
-//           video: true,
-//           audio: true
-//         });
-
-//         //local camera attach
-//         localVideo.srcObject = localStream;
-
-//         peerConnection = new RTCPeerConnection(config);
-
-//         localStream.getTracks().forEach(track => {
-//           peerConnection.addTrack(track, localStream);
-//         });
-
-//         //remote stream attach
-//         peerConnection.ontrack = event => {
-//           remoteVideo.srcObject = event.streams[0];
-//           startCallTimer();
-//         };
-
-//         peerConnection.onicecandidate = event => {
-//           if (event.candidate) {
-//             socket.emit('ice-candidate', {
-//               roomId,
-//               candidate: event.candidate
-//             });
-//           }
-//         };
-
-//         socket.emit('join-room', roomId);
-
-//       } catch (error) {
-//         alert('Camera access denied or not found');
-//         console.error(error);
-//       }
-//     }
 
 
 
@@ -154,16 +103,7 @@ async function startVideo() {
     socket.emit('offer', { roomId, offer });
   });
 
-  // socket.on('offer', async offer => {
-  //   if (!peerConnection) return;
-
-  //   await peerConnection.setRemoteDescription(offer);
-
-  //   const answer = await peerConnection.createAnswer();
-  //   await peerConnection.setLocalDescription(answer);
-
-  //   socket.emit('answer', { roomId, answer });
-  // });
+  
 
   socket.on('offer', async offer => {
   if (!peerConnection) return;
@@ -180,11 +120,7 @@ async function startVideo() {
   socket.emit('answer', { roomId, answer });
 });
 
-  // socket.on('answer', async answer => {
-  //   if (!peerConnection) return;
-
-  //   await peerConnection.setRemoteDescription(answer);
-  // });
+  
 
   socket.on('answer', async answer => {
   if (!peerConnection) return;
@@ -196,11 +132,7 @@ async function startVideo() {
   }
 });
 
-  // socket.on('ice-candidate', async candidate => {
-  //   if (!peerConnection) return;
-
-  //   await peerConnection.addIceCandidate(candidate);
-  // });
+  
 
 
 
@@ -252,81 +184,7 @@ async function startVideo() {
 }
 
 
-    // socket.on('user-joined', async () => {
-    //   if(!peerConnection)return;
-    //   const offer = await peerConnection.createOffer();
-    //   await peerConnection.setLocalDescription(offer);
-
-    //   socket.emit('offer', { roomId, offer });
-    // });
-//     socket.on('user-joined', async () => {
-      
-//   if (!peerConnection) return;
-
-//   const offer = await peerConnection.createOffer();
-//   await peerConnection.setLocalDescription(offer);
-
-//   socket.emit('offer', { roomId, offer });
-// });
-
-    // socket.on('offer', async offer => {
-    //   if (!peerConnection)return;
-    //   if(peerConnection.signalingState !=="stable")return;
-    //   await peerConnection.setRemoteDescription(offer);
-
-    //   const answer = await peerConnection.createAnswer();
-    //   await peerConnection.setLocalDescription(answer);
-
-    //   socket.emit('answer', { roomId, answer });
-    // });
-
-    // socket.on('answer', async answer => {
-    //   if(!peerConnection) return;
-    //   await peerConnection.setRemoteDescription(answer);
-    // });
-//     socket.on('answer', async answer => {
-//   if (!peerConnection) return;
-
-//   try {
-//     await peerConnection.setRemoteDescription(answer);
-//   } catch (e) {
-//     console.log("Answer error:", e);
-//   }
-// });
-
-    // socket.on('ice-candidate', async candidate => {
-    //   if(!peerConnection)return ;
-    //   try {
-    //     await peerConnection.addIceCandidate(candidate);
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-    // });
-//     setTimeout(async () => {
-//   if (peerConnection && socket) {
-//     const offer = await peerConnection.createOffer();
-//     await peerConnection.setLocalDescription(offer);
-
-//     socket.emit('offer', { roomId, offer });
-//   }
-// }, 2000);
-
-   
-  // let timeLeft = 300;
-
-// async function loadRoomTime() {
-//   try {
-//     const res = await fetch(`https://icu-virtual-visit.onrender.com/api/session/room/${roomId}`);
-//     const data = await res.json();
-
-//     timeLeft = data.timeLimit || 300;
-
-//     console.log("Time from backend:", timeLeft);
-
-//   } catch (err) {
-//     console.error("Error fetching time:", err);
-//   }
-// }
+ 
 let timeLeft=300;
 let timerStarted = false;
 
@@ -354,25 +212,15 @@ function startCallTimer() {
         })
       });
 
-      
-      // const time = localStorage.getItem("callTime") || 300;
+
 
 window.location.href = `feedback.html?room=${roomId}`;
     }
   }, 1000);
 }
-// function launchVideo() {
-//   const room = document.getElementById("roomInput").value;
 
-//   if (!room) {
-//     return alert("Enter Room ID");
-//   }
 
-  
-//   const time = localStorage.getItem("callTime") || 300;
 
-// window.location.href = `video.html?room=${room}&time=${time}`;
-// }
 function goToRoom() {
   const room = document.getElementById("roomInput").value;
 
@@ -380,7 +228,7 @@ function goToRoom() {
     return alert("Enter Room ID");
   }
 
-  // redirect to same page with room param
+ 
   window.location.href = `video.html?room=${room}`;
 }
     
