@@ -154,28 +154,65 @@ async function startVideo() {
     socket.emit('offer', { roomId, offer });
   });
 
+  // socket.on('offer', async offer => {
+  //   if (!peerConnection) return;
+
+  //   await peerConnection.setRemoteDescription(offer);
+
+  //   const answer = await peerConnection.createAnswer();
+  //   await peerConnection.setLocalDescription(answer);
+
+  //   socket.emit('answer', { roomId, answer });
+  // });
+
   socket.on('offer', async offer => {
-    if (!peerConnection) return;
+  if (!peerConnection) return;
 
-    await peerConnection.setRemoteDescription(offer);
+  // ✅ ADD THIS LINE
+  if (peerConnection.signalingState !== "stable") return;
 
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
+  // ✅ CHANGE THIS
+  await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
 
-    socket.emit('answer', { roomId, answer });
-  });
+  const answer = await peerConnection.createAnswer();
+  await peerConnection.setLocalDescription(answer);
+
+  socket.emit('answer', { roomId, answer });
+});
+
+  // socket.on('answer', async answer => {
+  //   if (!peerConnection) return;
+
+  //   await peerConnection.setRemoteDescription(answer);
+  // });
 
   socket.on('answer', async answer => {
-    if (!peerConnection) return;
+  if (!peerConnection) return;
 
-    await peerConnection.setRemoteDescription(answer);
-  });
+  try {
+    await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+  } catch (e) {
+    console.log("Answer error:", e);
+  }
+});
+
+  // socket.on('ice-candidate', async candidate => {
+  //   if (!peerConnection) return;
+
+  //   await peerConnection.addIceCandidate(candidate);
+  // });
+
+
 
   socket.on('ice-candidate', async candidate => {
-    if (!peerConnection) return;
+  if (!peerConnection) return;
 
-    await peerConnection.addIceCandidate(candidate);
-  });
+  try {
+    await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+  } catch (e) {
+    console.log("ICE error:", e);
+  }
+});
 
   try {
     localStream = await navigator.mediaDevices.getUserMedia({
